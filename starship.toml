@@ -1,0 +1,140 @@
+add_newline = false
+
+format = "${custom.path}$fill${custom.py_icon} ${custom.git_icon} ${custom.branch_fixed}\n${custom.character}"
+
+[fill]
+symbol = " "
+
+[custom.character]
+command = '''
+. "$HOME/.local/share/theme/colors.sh"
+hex_to_rgb() {
+  hex="${1#\#}"
+  printf '%d;%d;%d' "0x$(printf '%s' "$hex" | cut -c1-2)" "0x$(printf '%s' "$hex" | cut -c3-4)" "0x$(printf '%s' "$hex" | cut -c5-6)"
+}
+if [ "$STARSHIP_CMD_STATUS" -eq 0 ]; then
+  printf '\033[38;2;%sm󱠡  \033[0m' "$(hex_to_rgb "$GREEN")"
+else
+  printf '\033[38;2;%sm󰹇  \033[0m' "$(hex_to_rgb "$RED")"
+fi
+'''
+when = "true"
+format = "$output"
+unsafe_no_escape = true
+
+[custom.path]
+command = '''
+. "$HOME/.local/share/theme/colors.sh"
+hex_to_rgb() {
+  hex="${1#\#}"
+  printf '%d;%d;%d' "0x$(printf '%s' "$hex" | cut -c1-2)" "0x$(printf '%s' "$hex" | cut -c3-4)" "0x$(printf '%s' "$hex" | cut -c5-6)"
+}
+gray3="$(hex_to_rgb "$GRAY3")"
+gray4="$(hex_to_rgb "$GRAY4")"
+home="${HOME%/}"
+pwd="$PWD"
+if [ "$pwd" = "$home" ]; then
+  display="~"
+elif [ "${pwd#"$home"/}" != "$pwd" ]; then
+  display="~/${pwd#"$home"/}"
+else
+  display="$pwd"
+fi
+parent="${display%/*}"
+base="${display##*/}"
+if [ "$display" = "/" ] || [ "$display" = "~" ] || [ "$parent" = "$display" ]; then
+  printf '\033[3;38;2;%sm%s\033[0m' "$gray3" "$display"
+else
+  printf '\033[3;38;2;%sm%s/\033[3;38;2;%sm%s\033[0m' "$gray3" "$parent" "$gray4" "$base"
+fi
+'''
+when = "true"
+format = "$output"
+unsafe_no_escape = true
+
+[custom.py_icon]
+command = '''
+. "$HOME/.local/share/theme/colors.sh"
+hex_to_rgb() {
+  hex="${1#\#}"
+  printf '%d;%d;%d' "0x$(printf '%s' "$hex" | cut -c1-2)" "0x$(printf '%s' "$hex" | cut -c3-4)" "0x$(printf '%s' "$hex" | cut -c5-6)"
+}
+yellow="$(hex_to_rgb "$YELLOW")"
+gray3="$(hex_to_rgb "$GRAY3")"
+dir="$PWD"
+venv=""
+while :; do
+  if [ -d "$dir/.venv" ]; then
+    venv="$dir/.venv"
+    break
+  fi
+  [ "$dir" = "/" ] && break
+  dir="${dir%/*}"
+  [ -z "$dir" ] && dir="/"
+done
+if [ -z "$venv" ]; then
+  printf '   '
+  exit 0
+fi
+if [ -n "$VIRTUAL_ENV" ] && [ "$VIRTUAL_ENV" = "$venv" ]; then
+  printf '\033[38;2;%sm  \033[0m' "$yellow"
+else
+  printf '\033[38;2;%sm  \033[0m' "$gray3"
+fi
+'''
+when = "true"
+format = "$output"
+unsafe_no_escape = true
+
+[custom.git_icon]
+command = '''
+. "$HOME/.local/share/theme/colors.sh"
+hex_to_rgb() {
+  hex="${1#\#}"
+  printf '%d;%d;%d' "0x$(printf '%s' "$hex" | cut -c1-2)" "0x$(printf '%s' "$hex" | cut -c3-4)" "0x$(printf '%s' "$hex" | cut -c5-6)"
+}
+yellow="$(hex_to_rgb "$YELLOW")"
+gray3="$(hex_to_rgb "$GRAY3")"
+git rev-parse --is-inside-work-tree >/dev/null 2>&1 || {
+  printf '   '
+  exit 0
+}
+gst="$(git status --porcelain=2 --branch 2>/dev/null)"
+if printf '%s\n' "$gst" | grep -Eq '^(1|2|u|\?) '; then
+  printf '\033[38;2;%sm  \033[0m' "$yellow"
+  exit 0
+fi
+if printf '%s\n' "$gst" | grep -Eq '^# branch\.ab \+[1-9][0-9]* -[0-9]+|^# branch\.ab \+[0-9]+ -[1-9][0-9]*'; then
+  printf '\033[38;2;%sm  \033[0m' "$yellow"
+  exit 0
+fi
+printf '\033[38;2;%sm\033[0m' "$gray3"
+'''
+when = "true"
+format = "$output"
+unsafe_no_escape = true
+
+[custom.branch_fixed]
+command = '''
+. "$HOME/.local/share/theme/colors.sh"
+hex_to_rgb() {
+  hex="${1#\#}"
+  printf '%d;%d;%d' "0x$(printf '%s' "$hex" | cut -c1-2)" "0x$(printf '%s' "$hex" | cut -c3-4)" "0x$(printf '%s' "$hex" | cut -c5-6)"
+}
+fg="$(hex_to_rgb "$FG")"
+git rev-parse --is-inside-work-tree >/dev/null 2>&1 || {
+  printf '%-10s' ' '
+  exit 0
+}
+
+branch="$(git symbolic-ref --short HEAD 2>/dev/null || git rev-parse --short HEAD 2>/dev/null)"
+
+if [ "${#branch}" -gt 10 ]; then
+  branch="$(printf '%.7s' "$branch")..."
+fi
+
+printf '\033[38;2;%sm%-10s\033[0m' "$fg" "$branch"
+'''
+when = "true"
+format = "$output"
+unsafe_no_escape = true
