@@ -1,0 +1,40 @@
+set nowrap
+set number
+set relativenumber
+set tabstop=2
+set softtabstop=2
+set shiftwidth=2
+set autoindent
+set expandtab
+set hlsearch
+set incsearch
+set showmatch
+set smartcase
+set hidden
+set ttyfast
+set nocompatible
+syntax on
+colorscheme zaibatsu
+
+" Plugins (XDG-aware vim-plug setup)
+let s:plug_vim = expand('~/.config/vim/autoload/plug.vim')
+if filereadable(s:plug_vim)
+  call plug#begin('~/.config/vim/plugged')
+
+  Plug 'tpope/vim-surround'
+  Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+  Plug 'tpope/vim-sleuth'
+
+  call plug#end()
+else
+  echohl WarningMsg
+  echom 'vim-plug is missing at ~/.config/vim/autoload/plug.vim'
+  echom 'Install: curl -fLo ~/.config/vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+  echohl None
+endif
+
+if !exists('g:surround_custom_mapping')
+  let g:surround_custom_mapping = {}
+endif
+
+let g:surround_custom_mapping.python = {'__': "__\r__" }

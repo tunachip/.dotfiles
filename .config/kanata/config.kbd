@@ -1,0 +1,36 @@
+(defcfg
+  process-unmapped-keys yes
+)
+
+(defsrc
+  esc f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12
+  grv 1 2 3 4 5 6 7 8 9 0 - = bspc
+  tab q w e r t y u i o p [ ] \
+  caps a s d f g h j k l ; ' ret
+  lsft z x c v b n m , . / rsft
+  lctl lmet lalt spc ralt rctl
+)
+
+(defalias
+  to-nav (layer-while-held nav)
+  sp-nav (tap-hold-release 200 200 spc @to-nav)
+)
+
+(deflayer Default
+  esc f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12
+  grv 1 2 3 4 5 6 7 8 9 0 - = bspc
+  tab q w e r t y u i o p [ ] \
+  lctl a s d f g h j k l ; ' ret
+  lsft z x c v b n m , . / rsft
+  lctl lmet lalt @sp-nav ralt rctl
+)
+
+(deflayer nav
+  _ _ _ _ _ _ _ _ _ _ _ _ _
+  _ M-1 M-2 M-3 M-4 M-5 M-6 M-7 M-8 M-9 M-0 _ _ bspc
+  _ _ _ _ _ _ _ pgup _ pgdn _ _ _ _
+  tab lsft lctl lmet lalt _ left down up right bspc _ _
+  _ _ _ _ _ _ _ _ _ _ _ _
+  _ _ _ _ _ _
+)
+

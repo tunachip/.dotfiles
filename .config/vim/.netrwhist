@@ -1,0 +1,12 @@
+let g:netrw_dirhistmax  =10
+let g:netrw_dirhistcnt =7
+let g:netrw_dirhist_7='/home/tunachip/.config/nvim/lua'
+let g:netrw_dirhist_6='/home/tunachip/.config/nvim'
+let g:netrw_dirhist_5='/home/tunachip/.config/nvim/lua'
+let g:netrw_dirhist_4='/home/tunachip/.config/nvim'
+let g:netrw_dirhist_3='/home/tunachip/.config/nvim/lua'
+let g:netrw_dirhist_2='/home/tunachip/.config/nvim'
+let g:netrw_dirhist_1='/home/tunachip/.config/nvim/lua'
+let g:netrw_dirhist_0='/home/tunachip/.config/nvim'
+let g:netrw_dirhist_9='/home/tunachip/.config/nvim/lua'
+let g:netrw_dirhist_8='/home/tunachip/.config/nvim'

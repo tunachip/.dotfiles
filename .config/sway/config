@@ -1,0 +1,126 @@
+### ==================================================
+### Visuals
+### ==================================================
+include ~/.local/share/theme/themes/sway-colors.conf
+
+exec dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=sway
+exec systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP
+
+xwayland enable
+font pango:BlexMono Nerd Font 14
+set $qt_wayland_env env QT_WAYLAND_DISABLE_WINDOWDECORATION=1
+
+default_border pixel 1
+default_floating_border normal 5
+titlebar_padding 4 1
+titlebar_border_thickness 1
+focus_follows_mouse no
+
+client.focused          $gray3 $gray3 $white $gray2 $gray2
+client.focused_inactive $black $black $gray2 $black $black
+client.unfocused        $black $black $gray2 $black $black
+client.urgent           $red   $red   $white $red   $red
+client.placeholder      $black $black $white $black $black
+client.background       $black
+
+input * { repeat_delay 250 repeat_rate 30 }
+
+bar {
+    position top
+    font pango:BlexMono Nerd Font 14
+    status_command ~/.local/bin/statusbar
+    workspace_buttons yes
+    workspace_min_width 40
+    strip_workspace_numbers yes
+    colors {
+        background $black
+        statusline $white
+        separator  $gray2
+        focused_workspace  $black $black $white
+        urgent_workspace   $red   $red   $gray3
+        inactive_workspace $black $black $gray3
+        active_workspace   $black $black $gray3
+    }
+}
+
+### ==================================================
+### Keybinds
+### ==================================================
+
+# Primary Modifier = Meta
+set $mod Mod4
+
+# Terminal + launcher menu
+bindsym $mod+Return exec $qt_wayland_env wezterm
+bindsym $mod+Space exec $qt_wayland_env bemenu-run
+
+# Primary Keybinds
+bindsym $mod+Shift+Return reload
+bindsym $mod+f fullscreen toggle
+bindsym $mod+Backspace kill
+
+# Focus movement
+bindsym $mod+Left  focus left
+bindsym $mod+Right focus right
+bindsym $mod+Up    resize grow height 30 px
+bindsym $mod+Down  resize shrink height 30 px
+
+# Switch workspaces
+bindsym $mod+Tab workspace back_and_forth
+bindsym $mod+1 workspace 1
+bindsym $mod+2 workspace 2
+bindsym $mod+3 workspace 3
+bindsym $mod+4 workspace 4
+bindsym $mod+5 workspace 5
+bindsym $mod+6 workspace 6
+bindsym $mod+7 workspace 7
+bindsym $mod+8 workspace 8
+bindsym $mod+9 workspace 9
+bindsym $mod+0 workspace 10
+bindsym $mod+Page_Up   workspace prev
+bindsym $mod+Page_Down workspace next
+
+# Move containers
+bindsym $mod+Shift+Right exec ~/.local/bin/sway-next-empty right
+bindsym $mod+Shift+Left  exec ~/.local/bin/sway-next-empty left
+
+# --------------------------------------------------
+# Audio controls
+# --------------------------------------------------
+bindsym $mod+bracketleft  exec wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-
+bindsym $mod+bracketright exec wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+
+
+# --------------------------------------------------
+# Brightness controls
+# --------------------------------------------------
+bindsym $mod+Shift+bracketleft  exec brightnessctl set 5%-
+bindsym $mod+Shift+bracketright exec brightnessctl set +5%
+
+# --------------------------------------------------
+# Menu Launcher
+# --------------------------------------------------
+bindsym $mod+Shift+i exec $qt_wayland_env ~/.local/bin/menus/root
+
+### ==================================================
+### Program Launch Rules
+### ==================================================
+
+for_window [app_id="^(?!org\\.wezfurlong\\.wezterm$|firefox$|godot$).*$"] floating enable, border normal
+
+### ==================================================
+### Startup Utilities
+### ==================================================
+
+# Init Clipboard
+exec_always wl-paste --type text --watch clipman store
+
+# Sway Environment Setup
+exec_always systemctl --user set-environment QT_WAYLAND_DISABLE_WINDOWDECORATION=1
+exec_always dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=sway
+exec_always dbus-update-activation-environment --systemd QT_WAYLAND_DISABLE_WINDOWDECORATION=1
+
+# Prefer an external display as the only active output on hotplug/reload.
+exec_always --no-startup-id ~/.local/bin/sway-mirror-hotplug
+
+# Launch Tmux Sys Session
+exec_always --no-startup-id ~/.local/bin/start-sys-session

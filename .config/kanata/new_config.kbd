@@ -1,0 +1,61 @@
+(defcfg
+  process-unmapped-keys yes
+  concurrent-tap-hold yes
+)
+(defsrc
+  esc f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12
+  grv 1 2 3 4 5 6 7 8 9 0 - = bspc
+  tab q w e r t y u i o p [ ] \
+  caps a s d f g h j k l ; ' ret
+  lsft z x c v b n m , . / rsft
+  lctl lmet lalt spc ralt rctl
+)
+
+;; ----- aliases -----
+(defalias
+  to-nav (layer-while-held nav)
+  sp-nav (tap-hold-release 200 200 spc @to-nav)
+)
+(defalias
+  mse (layer-while-held mouse)
+  alb (tap-hold-release 200 200 bspc lalt)
+)
+(defalias
+  ms↑ (movemouse-up 2 1)
+  ms← (movemouse-left 2 1)
+  ms↓ (movemouse-down 2 1)
+  ms→ (movemouse-right 2 1)
+  mwu (mwheel-up 50 80)
+  mwd (mwheel-down 50 80)
+)
+
+(defchordsv2
+  (a f) @mse 250 all-released (Default mouse)
+)
+(deflayer Default
+  esc f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12
+  grv 1 2 3 4 5 6 7 8 9 0 - = bspc
+  tab q w e r t y u i o p [ ] \
+  caps a s d f g h j k l ; ' ret
+  lsft z x c v b n m , . / rsft
+  lctl lmet lalt @sp-nav ralt rctl
+)
+
+(deflayer nav
+  _ _ _ _ _ _ _ _ _ _ _ _ _
+  _ M-1 M-2 M-3 M-4 M-5 M-6 M-7 M-8 M-9 M-0 _ _ bspc
+  _ _ _ _ _ _ _ pgup _ pgdn _ _ _ _
+  _ lsft lctl lmet lalt _ left down up right @alb _ _
+  _ _ _ _ _ _ _ _ _ _ _ _
+  _ _ _ _ _ _
+)
+
+(deflayer mouse
+  _ _ _ _ _ _ _ _ _ _ _ _ _
+  _ _ _ _ _ _ _ @mwu _ @mwd _ _ _ _
+  _ _ _ _ _ _ _ _ mrgt _ _ _ _ _
+  _ _ _ _ _ _ @ms← @ms↓ @ms↑ @ms→ _ _ _
+  _ _ _ _ _ _ mlft _ _ _ _ _
+  _ _ _ _ _ _
+)
+
